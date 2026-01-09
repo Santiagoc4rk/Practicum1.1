@@ -166,7 +166,7 @@ object LimpiezaCrew extends IOApp.Simple:
 
 ---
 
-## 👤 Información del Proyecto
+## Información del Proyecto
 
 **Autor**: Andrés Yaguachi  
 **Proyecto**: Practicum - Limpieza de Datos de Películas  
