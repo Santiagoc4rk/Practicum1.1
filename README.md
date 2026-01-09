@@ -174,7 +174,3 @@ object LimpiezaCrew extends IOApp.Simple:
 **Fecha**: Enero 2026
 
 
-*Autor*: Andrés Yaguachi 
-*Proyecto*: Practicum - Limpieza de Datos de Películas  
-*Tecnologías*: Scala 3, Cats Effect, FS2, Circe  
-*Fecha*: Enero 2026
