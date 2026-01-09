@@ -10,14 +10,13 @@ Este módulo se enfoca *exclusivamente en la limpieza y procesamiento de la colu
 
 ### Problema 1: JSON Malformado (Formato Python)
 El CSV contiene JSON en formato Python que no es válido para parsers JSON estándar:
-
-python
+```python
 # CSV original (formato Python)
 [{'name': 'John', 'job': 'Director', 'id': None, 'gender': True}]
-
+```
 
 *Solución*:
-scala
+```scala
 def prepararJSONCrewParaParseo(crew: String): String =
   crew.trim
     .replaceAll("'", "\"")           // ' → "
@@ -25,28 +24,27 @@ def prepararJSONCrewParaParseo(crew: String): String =
     .replaceAll("True", "true")      // True → true
     .replaceAll("False", "false")    // False → false
     .replaceAll("""\\""", "")        // Eliminar escapes
-
+```
 
 ### Problema 2: CSV con ; dentro de JSON
 El CSV usa ; como separador, pero el JSON también puede contener ;:
-
-csv
+```csv
 123;Avatar;"[{'name': 'Cameron; James', 'job': 'Director'}]";...
-
+```
 
 *Solución*: Parser de CSV con estado que respeta comillas:
-scala
+```scala
 def parseCSVLine(line: String): Array[String] =
   // Usa fold con estado (fields, current, inQuotes)
   // Solo separa por ';' cuando NO está entre comillas
+```
 
-
+---
 
 ##  Estructura del Código
 
 ### 1. Modelos de Datos
-
-scala
+```scala
 // Modelo del crew member (todos los campos opcionales por seguridad)
 case class Crew(
   credit_id: Option[String],
@@ -63,7 +61,7 @@ case class MovieWithCrew(
   title: String,
   crew: List[Crew]
 )
-
+```
 
 ### 2. Utilidades de Limpieza
 
@@ -72,12 +70,11 @@ Convierte JSON de formato Python a formato JSON válido.
 
 #### normalizarTexto
 Normaliza strings: elimina espacios múltiples y convierte vacíos a None.
-
-scala
+```scala
 "  John   Smith  " → Some("John Smith")
 "" → None
 "   " → None
-
+```
 
 #### normalizarCrewMember
 Aplica normalización a todos los campos de un Crew.
@@ -91,8 +88,7 @@ Parsea la celda de crew completa: limpia JSON → decodifica → normaliza.
 ---
 
 ##  Flujo de Procesamiento
-
-mermaid
+```mermaid
 graph TD
     A[Leer CSV con FS2] --> B[Dividir en líneas]
     B --> C[Parsear headers]
@@ -105,14 +101,12 @@ graph TD
     I --> J[normalizarCrewMember]
     J --> K[Crear MovieWithCrew]
     K --> L[Análisis y estadísticas]
-
+```
 
 ---
 
-##  Output del Programa
-
-
-
+## 📊 Output del Programa
+```
 1. ESTADÍSTICAS GENERALES
 --------------------------------------------------------------------------------
 Películas procesadas:                3.227
@@ -120,33 +114,34 @@ Total crew members (únicos):        26.419
 Directores:                          2.605
 Miembros de Producción:              5.266
 Escritores:                          4.698
+```
 
+---
 
 ##  Errores Comunes y Soluciones
 
 ### Error 1: "Got value with wrong type, expecting string"
 
 **Error completo**:
-
+```
 Error parseando crew: DecodingFailure at [0].id: Got value '4109' with wrong type, expecting string
-
+```
 
 **Causa**: El JSON contiene números (`id: 4109`, `gender: 2`) pero el case class los tiene como `String`.
 
 **Solución**: Cambiar los tipos en el case class:
-scala
-//  Incorrecto
+```scala
+
 case class Crew(
   id: Option[String],      // ← Error
   gender: Option[String]   // ← Error
 )
 
-//  Correcto
 case class Crew(
   id: Option[Int],         // ← Números son Int
   gender: Option[Int]      // ← 0=N/A, 1=Female, 2=Male
 )
-
+```
 
 ### Error 2: "object LimpiezaCrew is not a member"
 
@@ -162,15 +157,21 @@ case class Crew(
 **Causa**: Extendiendo `App` en lugar de `IOApp.Simple`.
 
 **Solución**:
-scala
-//  Incorrecto
+```scala
+
 object LimpiezaCrew extends App:
 
-//  Correcto
 object LimpiezaCrew extends IOApp.Simple:
 ```
 
 ---
+
+## 👤 Información del Proyecto
+
+**Autor**: Andrés Yaguachi  
+**Proyecto**: Practicum - Limpieza de Datos de Películas  
+**Tecnologías**: Scala 3, Cats Effect, FS2, Circe  
+**Fecha**: Enero 2026
 
 
 *Autor*: Andrés Yaguachi 
