@@ -20,7 +20,7 @@ given CsvRowDecoder[MovieText, String] =
 object LeerMoviesTexto extends IOApp.Simple:
 
   val filePath: Path =
-    Path("C:\\Users\\Usuario iTC\\Desktop\\Practicum\\src\\main\\resources\\Data\\pi_movies_complete.csv")
+    Path("C:\\Users\\Usuario iTC\\Desktop\\Practicum\\src\\main\\resources\\Data\\pi-movies-complete-2026-01-14.csv")
 
   val run: IO[Unit] =
     Files[IO]

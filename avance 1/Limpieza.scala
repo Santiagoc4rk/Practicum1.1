@@ -11,9 +11,7 @@ import fs2.data.csv.generic.semiauto.*
 // ==========================================
 case class MovieCompleta(
                           adult: String,
-                          belongs_to_collection: String,
                           budget: Double,
-                          genres: String,
                           homepage: String,
                           id: Double,
                           imdb_id: String,
@@ -22,22 +20,15 @@ case class MovieCompleta(
                           overview: String,
                           popularity: Double,
                           poster_path: String,
-                          production_companies: String,
-                          production_countries: String,
                           release_date: String,
                           revenue: Double,
                           runtime: Double,
-                          spoken_languages: String,
                           status: String,
                           tagline: String,
                           title: String,
                           video: String,
                           vote_average: Double,
                           vote_count: Double,
-                          keywords: String,
-                          cast: String,
-                          crew: String,
-                          ratings: String
                         )
 
 given CsvRowDecoder[MovieCompleta, String] = deriveCsvRowDecoder[MovieCompleta]
@@ -48,7 +39,7 @@ given CsvRowDecoder[MovieCompleta, String] = deriveCsvRowDecoder[MovieCompleta]
 object LimpiezaCompletaMovies extends IOApp.Simple:
 
   val filePath: Path =
-    Path("C:\\Users\\Usuario iTC\\Desktop\\Practicum\\src\\main\\resources\\Data\\pi_movies_complete.csv")
+    Path("C:\\Users\\Usuario iTC\\Desktop\\Practicum\\src\\main\\resources\\Data\\pi-movies-complete-2026-01-14.csv")
 
   // ==========================================
   // FUNCIONES DE VALIDACIÓN
@@ -67,6 +58,10 @@ object LimpiezaCompletaMovies extends IOApp.Simple:
 
   def isValidOptionalTagline(s: String): Boolean =
     s == null || s.trim.isEmpty || s.equalsIgnoreCase("null") || isValidString(s)
+
+  def isValidBoolean(s: String): Boolean =
+    val normalized = s.trim.toLowerCase
+    normalized == "true" || normalized == "false" || normalized == "1" || normalized == "0"
 
   // ==========================================
   // CÁLCULO DE LÍMITES IQR
@@ -110,9 +105,9 @@ object LimpiezaCompletaMovies extends IOApp.Simple:
         isValidString(m.overview) &&  // OBLIGATORIO - crítico para análisis
         isValidString(m.release_date) &&
         m.release_date.matches("\\d{4}-\\d{2}-\\d{2}") &&
-        // Booleanos
-        (m.adult == "True" || m.adult == "False") &&
-        (m.video == "True" || m.video == "False") &&
+        // Booleanos (validación flexible)
+        isValidBoolean(m.adult) &&
+        isValidBoolean(m.video) &&
         // Códigos
         isValidString(m.status) &&
         isValidString(m.original_language) &&
@@ -230,8 +225,8 @@ object LimpiezaCompletaMovies extends IOApp.Simple:
         val invalidRuntime = rawMovies.count(m => m.runtime <= 0 || m.runtime > 300)
         val invalidPopularity = rawMovies.count(_.popularity < 0)
         val invalidVoteCount = rawMovies.count(_.vote_count < 0)
-        val invalidAdult = rawMovies.count(m => m.adult != "True" && m.adult != "False")
-        val invalidVideo = rawMovies.count(m => m.video != "True" && m.video != "False")
+        val invalidAdult = rawMovies.count(m => !isValidBoolean(m.adult))
+        val invalidVideo = rawMovies.count(m => !isValidBoolean(m.video))
         val invalidHomepage = rawMovies.count(m => !isValidOptionalUrl(m.homepage))
         val invalidImdbId = rawMovies.count(m => !isValidOptionalImdbId(m.imdb_id))
         val invalidPoster = rawMovies.count(m => !isValidOptionalPosterPath(m.poster_path))
@@ -299,8 +294,8 @@ object LimpiezaCompletaMovies extends IOApp.Simple:
           _ <- IO.println("\n" + "-" * 100)
           _ <- IO.println("  4. VALORES INVALIDOS EN CAMPOS BOOLEANOS")
           _ <- IO.println("-" * 100)
-          _ <- IO.println(f"     Adult (no True/False):    $invalidAdult%5d")
-          _ <- IO.println(f"     Video (no True/False):    $invalidVideo%5d")
+          _ <- IO.println(f"     Adult (formato inválido):    $invalidAdult%5d")
+          _ <- IO.println(f"     Video (formato inválido):    $invalidVideo%5d")
 
           _ <- IO.println("\n" + "-" * 100)
           _ <- IO.println("  5. FORMATOS INVALIDOS EN CAMPOS OPCIONALES")
