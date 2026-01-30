@@ -37,28 +37,27 @@ PracticumMovies1.1/
 │       │   └── application.conf
 │       └── scala/
 │           ├── config/
-│           │   └── Database.scala
+│           │   └── Database
 │           ├── dao/
-│           │   ├── SentenciasSQL.scala
-│           │   ├── moviesDAO.scala
-│           │   ├── castDAO.scala
-│           │   ├── crewDAO.scala
-│           │   ├── collectionDAO.scala
-│           │   ├── companiesDAO.scala
-│           │   ├── countriesDAO.scala
-│           │   ├── genresDAO.scala
-│           │   ├── keywordsDAO.scala
-│           │   ├── languagesDAO.scala
-│           │   └── rateDAO.scala
+│           │   ├── SentenciasSQL
+│           │   ├── moviesDAO
+│           │   ├── castDAO
+│           │   ├── crewDAO
+│           │   ├── collectionDAO
+│           │   ├── companiesDAO
+│           │   ├── countriesDAO
+│           │   ├── genresDAO
+│           │   ├── keywordsDAO
+│           │   ├── languagesDAO
+│           │   └── rateDAO
 │           ├── models/
-│           │   ├── Movie.scala
-│           │   ├── Movie_Raw.scala
-│           │   └── MovieJson.scala
+│           │   ├── Movie
+│           │   ├── Movie_Raw
+│           │   └── MovieJson
 │           ├── utilities/
 │           │   ├── LimpiarJSON.scala
 │           │   ├── NormalizarJSON.scala
-│           │   └── ParsearJSON.scala
-│           ├── untilies/
+│           │   ├── ParsearJSON.scala
 │           │   ├── MovieConverter.scala
 │           │   ├── ProcesadorPeliculas.scala
 │           │   └── ValidacionMovies.scala
@@ -246,19 +245,19 @@ Validación de integridad y limpieza de datos:
 
 **Validación:**
 - `esPeliculaValida(m: Movie_Raw)` - Valida campos críticos:
-  - ID mayor a 0
-  - Título válido y no nulo
-  - Fecha en formato YYYY-MM-DD
-  - Idioma válido
+    - ID mayor a 0
+    - Título válido y no nulo
+    - Fecha en formato YYYY-MM-DD
+    - Idioma válido
 
 **Limpieza:**
 - `limpiarUnaPelicula(m: Movie_Raw)` - Normaliza registro completo:
-  - Convierte negativos a positivos
-  - Limita vote_average a máximo 10.0
-  - Normaliza strings vacíos y nulos
-  - Corrige fechas inválidas a 1900-01-01
-  - Normaliza booleanos a "true"/"false"
-  - Valida códigos de idioma (2-3 caracteres)
+    - Convierte negativos a positivos
+    - Limita vote_average a máximo 10.0
+    - Normaliza strings vacíos y nulos
+    - Corrige fechas inválidas a 1900-01-01
+    - Normaliza booleanos a "true"/"false"
+    - Valida códigos de idioma (2-3 caracteres)
 
 **Helpers:**
 - `isValidString(s: String)` - Valida strings no nulos y no vacíos
@@ -281,12 +280,12 @@ Conversión de Movie_Raw a Movie normalizado:
 #### ProcesadorPeliculas.scala
 Orquestación de inserción transaccional completa:
 - `procesarPelicula(m: Movie, raw: Movie_Raw)` - Programa ConnectionIO que:
-  1. Parsea 9 columnas JSON en memoria
-  2. Inserta película principal
-  3. Inserta catálogos (collection, genres, companies, countries, languages, keywords)
-  4. Inserta personas (cast y crew en tabla people)
-  5. Inserta relaciones en tablas intermedias
-  6. Inserta valoraciones de usuarios
+    1. Parsea 9 columnas JSON en memoria
+    2. Inserta película principal
+    3. Inserta catálogos (collection, genres, companies, countries, languages, keywords)
+    4. Inserta personas (cast y crew en tabla people)
+    5. Inserta relaciones en tablas intermedias
+    6. Inserta valoraciones de usuarios
 
 Usa `.traverse` para procesamiento funcional y `.void` para ignorar resultados individuales.
 
@@ -388,20 +387,20 @@ val moviesToProcess = rawMovies.flatMap { raw =>
 
 **Limpieza de JSON Malformado:**
 1. Reemplazo de sintaxis Python:
-   - `None` → `null`
-   - `True` → `true`
-   - `False` → `false`
-   - Comillas simples → Comillas dobles
+    - `None` → `null`
+    - `True` → `true`
+    - `False` → `false`
+    - Comillas simples → Comillas dobles
 
 2. Corrección de estructura:
-   - Asegurar corchetes de apertura y cierre
-   - Corregir comillas dentro de nombres
-   - Añadir comas faltantes entre objetos
+    - Asegurar corchetes de apertura y cierre
+    - Corregir comillas dentro de nombres
+    - Añadir comas faltantes entre objetos
 
 3. Parches específicos por tipo:
-   - Cast/Crew: Arreglar nombres con caracteres especiales
-   - Companies: Corregir objetos concatenados
-   - Countries: Corregir objetos mal cerrados
+    - Cast/Crew: Arreglar nombres con caracteres especiales
+    - Companies: Corregir objetos concatenados
+    - Countries: Corregir objetos mal cerrados
 
 **Parseo con Circe:**
 ```scala
@@ -462,57 +461,57 @@ val batches = moviesToProcess.grouped(batchSize).toList
 
 ### 4.2 Programación Funcional
 - **Cats Effect 3** - Sistema de efectos para programación funcional
-  - IO monad para operaciones con side effects
-  - Resource para manejo seguro de recursos
-  - IOApp para aplicaciones funcionales
+    - IO monad para operaciones con side effects
+    - Resource para manejo seguro de recursos
+    - IOApp para aplicaciones funcionales
 
 - **Cats Core** - Abstracciones funcionales
-  - traverse para iteración funcional
-  - implicits para operadores funcionales
+    - traverse para iteración funcional
+    - implicits para operadores funcionales
 
 ### 4.3 Acceso a Datos
 - **Doobie 1.0** - Librería funcional para JDBC
-  - ConnectionIO para composición de queries
-  - Transactor para ejecución de transacciones
-  - Fragment para construcción segura de SQL
-  - Free monad para separación de descripción y ejecución
+    - ConnectionIO para composición de queries
+    - Transactor para ejecución de transacciones
+    - Fragment para construcción segura de SQL
+    - Free monad para separación de descripción y ejecución
 
 - **HikariCP** - Pool de conexiones de alto rendimiento
-  - Gestión eficiente de conexiones
-  - Monitoreo y métricas
-  - Configuración optimizada
+    - Gestión eficiente de conexiones
+    - Monitoreo y métricas
+    - Configuración optimizada
 
 ### 4.4 Procesamiento de Datos
 - **FS2 (Functional Streams 2)** - Streaming funcional
-  - Stream para procesamiento lazy
-  - Pipes para transformaciones
-  - Resource-safe por diseño
+    - Stream para procesamiento lazy
+    - Pipes para transformaciones
+    - Resource-safe por diseño
 
 - **FS2 Data CSV** - Parseo de archivos CSV
-  - Decodificación automática a case classes
-  - Soporte para headers
-  - Separadores personalizados
+    - Decodificación automática a case classes
+    - Soporte para headers
+    - Separadores personalizados
 
 - **Circe** - Librería JSON
-  - Parseo automático con generic.auto
-  - Codecs para case classes
-  - Manejo de errores con Either
+    - Parseo automático con generic.auto
+    - Codecs para case classes
+    - Manejo de errores con Either
 
 ### 4.5 Base de Datos
 - **MySQL 8.0+** - Sistema de gestión de bases de datos
-  - Soporte para transacciones ACID
-  - Foreign keys y constraints
-  - Optimizaciones de queries
+    - Soporte para transacciones ACID
+    - Foreign keys y constraints
+    - Optimizaciones de queries
 
 - **MySQL Connector/J** - Driver JDBC para MySQL
-  - Implementación del protocolo MySQL
-  - Pool de conexiones compatible
+    - Implementación del protocolo MySQL
+    - Pool de conexiones compatible
 
 ### 4.6 Configuración
 - **Typesafe Config** - Manejo de archivos de configuración
-  - Formato HOCON
-  - Carga de application.conf
-  - Valores por defecto
+    - Formato HOCON
+    - Carga de application.conf
+    - Valores por defecto
 
 ## 5. Esquema de Base de Datos Relacional
 
