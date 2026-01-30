@@ -1,5 +1,24 @@
 # Proyecto PracticumMovies1.1
 
+## TABLA DE CONTENIDOS
+
+### Ítems Desarrollados
+1. [Estructura del Proyecto](#1-estructura-del-proyecto)
+2. [Modelos de Datos](#21-modelos-de-datos)
+3. [Configuración de Base de Datos](#22-configuración-de-base-de-datos)
+4. [Capa de Acceso a Datos (DAO)](#23-capa-de-acceso-a-datos-dao)
+5. [Utilidades de Procesamiento](#24-utilidades-de-procesamiento)
+6. [Proceso ETL Implementado](#3-proceso-etl-implementado)
+7. [Tecnologías y Librerías Utilizadas](#4-tecnologías-y-librerías-utilizadas)
+8. [Esquema de Base de Datos Relacional](#5-esquema-de-base-de-datos-relacional)
+9. [Flujo de Ejecución](#6-flujo-de-ejecución)
+10. [Comandos de Ejecución](#7-comandos-de-ejecución)
+11. [Salida Esperada del Programa](#8-salida-esperada-del-programa)
+12. [Mejoras Futuras](#9-mejoras-futuras)
+13. [Conclusiones](#10-conclusiones)
+
+---
+
 ## 1. Estructura del Proyecto
 ```
 PracticumMovies1.1/
@@ -726,16 +745,14 @@ sbt "testOnly *SuiteTest"
 === INICIANDO ETL (MODELO POR LOTES) ===
 Tablas recreadas.
 Leyendo CSV...
-Leídos 45466 registros.
-Películas válidas para insertar: 45349
-Iniciando inserción en 454 lotes...
-✓ Lote 1/37 procesado (100 películas)
-✓ Lote 2/37 procesado (200 películas)
-✓ Lote 3/37 procesado (300 películas)
+Leídos 3487 registros.
+Películas válidas para insertar: 3480
+Iniciando inserción en 35 lotes...
+✓ Lote 1/35 procesado (100 películas)
+✓ Lote 2/35 procesado (200 películas)
+✓ Lote 3/35 procesado (300 películas)
 ...
-✓ Lote 36/37 procesado (45300 películas)
-✓ Lote 37/37 procesado (45349 películas)
-
+✓ Lote 35/35 procesado (3480 películas)
 
 PROCESO COMPLETADO EXITOSAMENTE
 ```
